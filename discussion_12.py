@@ -69,8 +69,36 @@ def problematic_salary(cur, conn):
     
 # TASK 4: VISUALIZATION
 def visualization_salary_data(cur, conn):
-    pass
-
+    
+    res2 = cur.execute("SELECT job_title, salary FROM employees INNER JOIN jobs USING (job_id)")
+    empx = []
+    empy = []
+    for points in res2.fetchall():
+        x,y = points
+        empx.append(x)
+        empy.append(y)
+    
+    plt.scatter(empx, empy)
+    
+    datax = []
+    datay = []
+    res1 = cur.execute("SELECT job_title, min_salary, max_salary FROM jobs")
+    
+    for points in res1.fetchall():
+        job_title, min_salary, max_salary = points
+        datax.append(job_title)
+        datay.append(min_salary)
+        datax.append(job_title)
+        datay.append(max_salary)
+    
+    plt.scatter(datax, datay, c = 'r', marker = 'x')
+    plt.xticks(rotation=45)
+    
+    
+   
+    
+    plt.show()
+    
 class TestDiscussion12(unittest.TestCase):
     def setUp(self) -> None:
         self.cur, self.conn = setUpDatabase('HR.db')
@@ -91,8 +119,9 @@ class TestDiscussion12(unittest.TestCase):
         self.assertIsInstance(sal_list, list)
         self.assertEqual(sal_list[0], ('Valli', 'Pataballa'))
         self.assertEqual(len(sal_list), 4)
-
-
+        
+    def test_visualization(self):
+        visualization_salary_data(self.cur, self.conn)
 def main():
     # SETUP DATABASE AND TABLE
     cur, conn = setUpDatabase('HR.db')
